@@ -24,6 +24,24 @@ def _load_Cogs(): # Подгрузка когов
             else:
                 client.load_extension(f'cogs.{filename}')
 
-if __name__ == "__main__":
+@bot.slash_command(name="report")
+async def report(ctx, user: disnake.Member, reason):
+    channel = await client.fetch_channel(981143262981152769)
+    await ctx.message.delete()
+    msg = await channel.send(embed=disnake.Embed(
+        title='Жалоба',
+        description=f'{ctx.author.mention} отправил жалобу на {user.mention}').
+                             add_field(name='Причина', value=f'{reason}'))
+
+    def check(r, user):
+        return r.emoji == '❌' and user != client.user
+
+    await msg.add_reaction("❌")
+    reaction = await client.wait_for('reaction_add', check=check)
+    await msg.delete()
+                
+                
+                
+                if __name__ == "__main__":
     _load_Cogs()
     client.run(TOKEN)
